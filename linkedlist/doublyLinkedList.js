@@ -24,27 +24,16 @@ class DoublyLinkedList {
   }
 
   insertAtEnd(data) {
-    let newNode = new ListNode(data);
+    let newNode = new ListNode(data, null, this.tail);
     if (!this.head) {
       this.head = newNode;
       this.tail = newNode;
       return;
     }
 
-    if (!this.head.next) {
-      this.head.next = newNode;
-      newNode.prev = this.head;
-      this.tail = newNode;
-      return;
+    if (this.tail) {
+      this.tail.next = newNode;
     }
-
-    let current = this.head;
-    while (current.next) {
-      current = current.next;
-    }
-
-    current.next = newNode;
-    newNode.prev = current;
     this.tail = newNode;
   }
 
@@ -93,8 +82,44 @@ class DoublyLinkedList {
     }
   }
 
+  deleteFromBeginning() {
+    if (!this.head) return "List is empty";
+    if (this.head === this.tail) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      this.head = this.head.next;
+      this.head.prev = null;
+    }
+  }
+
+  deleteFromEnd() {
+    if (!this.tail) return "List is empty";
+    if (this.head === this.tail) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      this.tail = this.tail.prev;
+      this.tail.next = null;
+    }
+  }
+
+  reversLIst() {
+    if (!this.head) return "blaak DLL";
+    temp = null;
+    let current = this.head;
+    while (current) {
+      temp = current.prev;
+      current.prev = current.next;
+      current.next = prev;
+      current = current.prev;
+    }
+    this.tail = this.head;
+    this.head = temp.prev;
+  }
+
   printList() {
-    if (!this.head) return "Lis is empty!";
+    if (!this.head) return "List is empty!";
     let current = this.head;
     let values = [];
     while (current) {
@@ -115,4 +140,8 @@ myDoublyLinkedList.insertAtbeginning(6);
 console.log(myDoublyLinkedList.printList());
 myDoublyLinkedList.insertAtGivenNodeKey(7, 6);
 myDoublyLinkedList.insertAfterGiveNodeKey(8, 1);
+console.log(myDoublyLinkedList.printList());
+myDoublyLinkedList.deleteFromBeginning();
+console.log(myDoublyLinkedList.printList());
+myDoublyLinkedList.deleteFromEnd();
 console.log(myDoublyLinkedList.printList());
