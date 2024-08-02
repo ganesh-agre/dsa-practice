@@ -13,57 +13,59 @@ class DoublyLinkedList {
   }
 
   insertAtbeginning(data) {
-    let newNode = new ListNode(data);
-    if (!this.head) {
-      this.head = newNode;
-      this.tail = newNode;
-      return;
+    const newNode = new ListNode(data, this.head, null);
+    if (this.head !== null) {
+      this.head.prev = newNode;
     }
-    newNode.next = this.head;
     this.head = newNode;
+    if (this.tail === null) {
+      this.tail = newNode;
+    }
   }
 
   insertAtEnd(data) {
     let newNode = new ListNode(data, null, this.tail);
-    if (!this.head) {
-      this.head = newNode;
-      this.tail = newNode;
-      return;
-    }
-
-    if (this.tail) {
+    if (this.tail !== null) {
       this.tail.next = newNode;
     }
     this.tail = newNode;
+
+    if (this.head === null) {
+      this.head = newNode;
+    }
   }
 
   insertAtGivenNodeKey(data, key) {
-    let newNode = new ListNode(data);
+    let newNode;
     if (!this.head) {
       this.head = newNode;
       this.tail = newNode;
       return;
     }
+
     if (this.head.data === key) {
-      newNode.next = this.head;
+      newNode = new ListNode(data, this.head, null);
+      this.head.prev = newNode;
       this.head = newNode;
+      return;
     }
 
     let current = this.head;
     while (current) {
       if (current.next.data === key) {
-        let temp = current.next;
+        newNode = new ListNode(data, current.next, current);
+        current.next.prev = newNode;
         current.next = newNode;
-        newNode.next = temp;
-        newNode.prev = current;
         return;
       }
       current = current.next;
     }
+    return "No such key exists";
   }
 
+  // its logic need to adjust as it always need to think about prev and next of newnode as well as pervious and next node
   insertAfterGiveNodeKey(data, key) {
-    let newNode = new ListNode(data);
+    let newNode;
     if (!this.head) {
       this.head = newNode;
       this.tail = newNode;
@@ -72,13 +74,31 @@ class DoublyLinkedList {
     let current = this.head;
     while (current) {
       if (current.data === key) {
-        let temp = current.next;
+        newNode = new ListNode(data, current.next, current);
+        if (current.next !== null) {
+          current.next.prev = newNode;
+        }
+
         current.next = newNode;
-        newNode.prev = current;
-        newNode.next = temp;
+        if (newNode.next === null) {
+          this.tail = newNode;
+        }
         return;
       }
       current = current.next;
+    }
+  }
+
+  insertAftergivenNode(pervNode, data) {
+    if (!pervNode) return "Please Provide prev node";
+    let newNode = new ListNode(data, pervNode.next, pervNode);
+    if (pervNode.next !== null) {
+      pervNode.next.prev = newNode;
+    }
+    pervNode.next = newNode;
+
+    if (newNode.next === null) {
+      this.tail = newNode;
     }
   }
 
@@ -104,18 +124,22 @@ class DoublyLinkedList {
     }
   }
 
-  reversLIst() {
-    if (!this.head) return "blaak DLL";
-    temp = null;
+  reverseList() {
     let current = this.head;
-    while (current) {
-      temp = current.prev;
+    let prev = null;
+
+    while (current != null) {
+      //swapping
+      prev = current.prev;
       current.prev = current.next;
       current.next = prev;
+      //move to next node
       current = current.prev;
     }
+
+    let temp = this.tail;
     this.tail = this.head;
-    this.head = temp.prev;
+    this.head = temp;
   }
 
   printList() {
@@ -131,17 +155,20 @@ class DoublyLinkedList {
 }
 
 let myDoublyLinkedList = new DoublyLinkedList();
-myDoublyLinkedList.insertAtbeginning(1);
-myDoublyLinkedList.insertAtbeginning(2);
 myDoublyLinkedList.insertAtEnd(3);
 myDoublyLinkedList.insertAtEnd(4);
 myDoublyLinkedList.insertAtEnd(5);
 myDoublyLinkedList.insertAtbeginning(6);
-console.log(myDoublyLinkedList.printList());
-myDoublyLinkedList.insertAtGivenNodeKey(7, 6);
-myDoublyLinkedList.insertAfterGiveNodeKey(8, 1);
-console.log(myDoublyLinkedList.printList());
+myDoublyLinkedList.insertAtbeginning(7);
+myDoublyLinkedList.insertAftergivenNode(
+  myDoublyLinkedList.head.next.next.next.next,
+  8
+);
+myDoublyLinkedList.insertAtGivenNodeKey(9, 8);
+myDoublyLinkedList.insertAfterGiveNodeKey(10, 8);
 myDoublyLinkedList.deleteFromBeginning();
 console.log(myDoublyLinkedList.printList());
-myDoublyLinkedList.deleteFromEnd();
+//myDoublyLinkedList.deleteFromEnd();
+console.log(myDoublyLinkedList.printList());
+myDoublyLinkedList.reverseList();
 console.log(myDoublyLinkedList.printList());
